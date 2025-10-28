@@ -84,17 +84,61 @@ export KCC_AUTHOR_EMAIL="you@example.com"
 ```bash
 # Start chat session
 npx @google/gemini-cli chat
+# or
+gemini --yolo
 
-# Check available tools
+# Check MCP server status
 /mcp list
 
-# Example prompts
-"Check if ComputeURLMap needs migration"
-"Find the EdgeCacheService resource files"
-"Add a new field called routeMethods to EdgeCacheService"
+# Should show:
+# 🟢 kccServer (from kcc-contributor) - Ready (12 tools)
+```
+
+**Example prompts:**
+```
+Check if ComputeURLMap needs migration
+```
+```
+Find the EdgeCacheService resource files
+```
+```
+Add a new field called routeMethods to EdgeCacheService
 ```
 
 See [GEMINI_CLI_USAGE.md](GEMINI_CLI_USAGE.md) for more examples.
+
+### Verifying Installation
+
+After installation, verify the MCP server is connected:
+
+```bash
+npx @google/gemini-cli chat
+```
+
+Then in the chat:
+```
+/mcp list
+```
+
+You should see:
+```
+🟢 kccServer (from kcc-contributor) - Ready (12 tools)
+  Tools:
+  - kcc_add_field
+  - kcc_detect_controller_type
+  - kcc_find_resource
+  - kcc_generate_mapper
+  - kcc_git_commit
+  - kcc_git_status
+  - kcc_migration_status
+  - kcc_plan_migration
+  - kcc_scaffold_controller
+  - kcc_scaffold_identity
+  - kcc_scaffold_mockgcp
+  - kcc_scaffold_types
+```
+
+If you see `🔴 kccServer - Disconnected`, see [Troubleshooting](#troubleshooting) below.
 
 ### Usage with Claude Desktop
 
@@ -345,6 +389,92 @@ node test/test-migration-tools.js
 ✅ Test 4: Verify EdgeCacheService (Direct Controller) - PASS
 ```
 
+## Troubleshooting
+
+### kccServer shows as Disconnected
+
+If `/mcp list` shows `🔴 kccServer - Disconnected`:
+
+**1. Check config file exists:**
+```bash
+cat ~/.config/kcc-mcp-server/config.json
+```
+
+If missing, run the setup script:
+```bash
+cd ~/.gemini/extensions/kcc-contributor
+./setup-config.sh
+```
+
+**2. Verify SDK version (must be 1.11.0+):**
+```bash
+cat ~/.gemini/extensions/kcc-contributor/package.json | grep "@modelcontextprotocol/sdk"
+```
+
+Should show: `"@modelcontextprotocol/sdk": "^1.11.0"`
+
+If it shows `0.5.0` or older, update the extension:
+```bash
+npx @google/gemini-cli extensions uninstall kcc-contributor
+npx @google/gemini-cli extensions install https://github.com/fkc1e100/kcc-mcp-server.git
+```
+
+**3. Test server manually:**
+```bash
+cd ~/.gemini/extensions/kcc-contributor
+node dist/index.js
+```
+
+Should show:
+```
+✅ KCC MCP Server initialized
+📁 Repository: /path/to/k8s-config-connector
+👤 Author: Your Name <you@example.com>
+🚀 KCC MCP Server running
+```
+
+**4. Check repository path is valid:**
+
+Make sure the `kcc_repo_path` in your config points to a valid k8s-config-connector directory.
+
+### Updating the Extension
+
+To get the latest version:
+
+**Option 1: Reinstall**
+```bash
+npx @google/gemini-cli extensions uninstall kcc-contributor
+npx @google/gemini-cli extensions install https://github.com/fkc1e100/kcc-mcp-server.git
+```
+
+**Option 2: Manual update**
+```bash
+cd ~/.gemini/extensions/kcc-contributor
+git pull origin main
+npm install
+```
+
+Then restart Gemini CLI.
+
+### Config File Not Found
+
+If you see errors about config not found, create the config file:
+
+```bash
+mkdir -p ~/.config/kcc-mcp-server
+cat > ~/.config/kcc-mcp-server/config.json << 'EOF'
+{
+  "git": {
+    "author_name": "Your Name",
+    "author_email": "you@example.com"
+  },
+  "kcc_repo_path": "/path/to/k8s-config-connector"
+}
+EOF
+```
+
+Replace the paths and details with your actual information.
+
 ## Migration Phases
 
 The migration process consists of 7 phases:
@@ -422,8 +552,9 @@ kcc-mcp-server/
 Configuration is loaded in this order (first found wins):
 
 1. **Environment variables** (highest priority)
-2. **Config file** (`~/.kcc-mcp-config.json`)
-3. **Git config** (lowest priority, used as fallback)
+   - `KCC_REPO_PATH`, `KCC_AUTHOR_NAME`, `KCC_AUTHOR_EMAIL`
+2. **Config file** (`~/.config/kcc-mcp-server/config.json`)
+3. **Git config** (lowest priority, used as fallback for author name/email only)
 
 ## Resources
 
