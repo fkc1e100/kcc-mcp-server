@@ -1,0 +1,17 @@
+{
+  "name": "kcc-contributor",
+  "version": "1.0.0",
+  "description": "KCC MCP Server for contributing to k8s-config-connector with field additions and migrations",
+  "mcpServers": {
+    "kccServer": {
+      "command": "node",
+      "args": ["${extensionPath}${/}dist${/}index.js"],
+      "cwd": "${extensionPath}",
+      "env": {
+        "KCC_REPO_PATH": "${env:KCC_REPO_PATH}",
+        "KCC_AUTHOR_NAME": "${env:KCC_AUTHOR_NAME}",
+        "KCC_AUTHOR_EMAIL": "${env:KCC_AUTHOR_EMAIL}"
+      }
+    }
+  }
+}
