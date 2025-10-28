@@ -18,7 +18,21 @@ This MCP server provides AI assistants with tools to:
 
 ## Quick Start
 
-### Installation
+### Installation with Gemini CLI (Recommended)
+
+```bash
+# Install from GitHub
+npx @google/gemini-cli extensions install https://github.com/fkc1e100/kcc-mcp-server.git
+
+# Run setup
+cd ~/.gemini/extensions/kcc-contributor
+./setup-config.sh
+
+# Start using it
+npx @google/gemini-cli chat
+```
+
+### Manual Installation
 
 ```bash
 # Clone or copy this repository
@@ -33,25 +47,54 @@ npm run build
 
 ### Configuration
 
-Create `~/.kcc-mcp-config.json`:
+**Option 1: Interactive Setup (Easiest)**
+
+Run the setup script after installation:
+
+```bash
+./setup-config.sh
+```
+
+This creates `~/.config/kcc-mcp-server/config.json` with your settings.
+
+**Option 2: Manual Config File**
+
+Create `~/.config/kcc-mcp-server/config.json`:
 
 ```json
 {
-  "repo_path": "/path/to/k8s-config-connector",
   "git": {
     "author_name": "Your Name",
     "author_email": "you@example.com"
-  }
+  },
+  "kcc_repo_path": "/path/to/k8s-config-connector"
 }
 ```
 
-Or use environment variables:
+**Option 3: Environment Variables**
 
 ```bash
 export KCC_REPO_PATH="/path/to/k8s-config-connector"
 export KCC_AUTHOR_NAME="Your Name"
 export KCC_AUTHOR_EMAIL="you@example.com"
 ```
+
+### Usage with Gemini CLI
+
+```bash
+# Start chat session
+npx @google/gemini-cli chat
+
+# Check available tools
+/mcp list
+
+# Example prompts
+"Check if ComputeURLMap needs migration"
+"Find the EdgeCacheService resource files"
+"Add a new field called routeMethods to EdgeCacheService"
+```
+
+See [GEMINI_CLI_USAGE.md](GEMINI_CLI_USAGE.md) for more examples.
 
 ### Usage with Claude Desktop
 
