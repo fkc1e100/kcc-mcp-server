@@ -5,6 +5,14 @@ set -e
 
 echo "=== KCC MCP Server Configuration Setup ==="
 echo ""
+echo "This MCP server helps you contribute to k8s-config-connector by:"
+echo "  - Adding fields to resources"
+echo "  - Migrating resources from Terraform to direct controller"
+echo "  - Creating git commits with proper attribution"
+echo ""
+echo "Your name and email will be used as the git commit author."
+echo "This ensures all commits are attributed to YOU (not AI)."
+echo ""
 
 # Get KCC repository path
 read -p "Enter path to k8s-config-connector repository: " KCC_REPO_PATH
@@ -15,6 +23,12 @@ if [ ! -d "$KCC_REPO_PATH" ]; then
     exit 1
   fi
 fi
+
+echo ""
+echo "--- Git Commit Attribution ---"
+echo "When creating commits through the MCP server, your name and email"
+echo "will be used as the commit author (required for k8s-config-connector contributions)."
+echo ""
 
 # Get author name (default from git config)
 GIT_NAME=$(git config user.name 2>/dev/null || echo "")
