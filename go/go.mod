@@ -1,4 +1,4 @@
-module github.com/fkc1e100/kcc-mcp-server
+module github.com/fkc1e100/kcc-mcp-server/go
 
 go 1.23.0
 
