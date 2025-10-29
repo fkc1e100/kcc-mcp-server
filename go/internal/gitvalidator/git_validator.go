@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/fkc1e100/kcc-mcp-server/internal/config"
+	"github.com/fkc1e100/kcc-mcp-server/go/internal/config"
 )
 
 // GitValidator handles git validation and operations
